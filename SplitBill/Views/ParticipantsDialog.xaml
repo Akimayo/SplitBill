@@ -1,0 +1,25 @@
+﻿<ContentDialog
+    x:Class="SplitBill.Views.ParticipantsDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SplitBill.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    x:Uid="ParticipantsDialog"
+    Style="{ThemeResource DefaultContentDialogStyle}"
+    Title="Add or remove payer"
+    PrimaryButtonText="Save"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+  <StackPanel Spacing="16">
+    <Button x:Uid="ParticipantsDialog_AddButton" Click="OnAddParticipant" HorizontalAlignment="Right" />
+    <controls:DataGrid ItemsSource="{x:Bind Names, Mode=OneWay}" AutoGenerateColumns="False">
+      <controls:DataGrid.Columns>
+        <controls:DataGridTextColumn Binding="{Binding Name, Mode=TwoWay}" Width="*" x:Uid="ParticipantsDialog_DataGrid" />
+      </controls:DataGrid.Columns>
+    </controls:DataGrid>
+    <TextBlock x:Uid="ParticipantsDialog_TextBlock" />
+  </StackPanel>
+</ContentDialog>

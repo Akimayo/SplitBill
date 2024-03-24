@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "SplitBill.Skia.Gtk": {
+      "commandName": "Project",
+      "remoteDebugEnabled": false
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    }
+  }
+}

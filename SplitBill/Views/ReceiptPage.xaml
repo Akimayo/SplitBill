@@ -1,0 +1,229 @@
+﻿<Page
+    x:Class="SplitBill.Views.ReceiptPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SplitBill.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:data="using:SplitBill.Data"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:wctprimitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
+    xmlns:convert="using:SplitBill.Xaml"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+  <Page.Resources>
+    <convert:PriceConverter x:Key="Price" />
+    <convert:BooleanVisibilityConverter x:Key="Visibility" />
+    <convert:ByteCheckboxConverter x:Key="Checkbox" />
+    <convert:NegateConverter x:Key="Negate" />
+    <convert:OptionConverter x:Key="Option" />
+  </Page.Resources>
+
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+    <ScrollViewer Background="White"
+          Padding="32,24"
+          Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
+      <TextBlock Text="{x:Bind Receipt.TextReceipt, Mode=OneWay}"
+                 Foreground="Black"
+                 FontFamily="ms-appx:///SplitBill/Assets/FiraMono-Regular.ttf#Fira Mono" />
+    </ScrollViewer>
+    <ProgressBar Visibility="{x:Bind Receipt.IsSaving, Converter={StaticResource Visibility}, Mode=OneWay}"
+                 IsIndeterminate="True"
+                 VerticalAlignment="Bottom"
+                 Grid.Column="1" Grid.Row="0" />
+    <StackPanel Spacing="8"
+                Orientation="Horizontal"
+                Margin="16,0"
+                Grid.Column="1" Grid.Row="0">
+      <Button Style="{StaticResource NavigationBackButtonNormalStyle}"
+              Command="{x:Bind NaviagateBackCommand}"
+              IsEnabled="{x:Bind Receipt.IsSaving, Mode=OneWay, Converter={StaticResource Negate}}"/>
+      <TextBlock Text="{x:Bind Receipt.Title, Mode=OneWay}"
+                 Style="{StaticResource TitleTextBlockStyle}"
+                 VerticalAlignment="Center"
+                 Margin="0,-2,0,0" />
+    </StackPanel>
+    <StackPanel Orientation="Horizontal"
+                Spacing="8"
+                Padding="8,0"
+                HorizontalAlignment="Right"
+                Grid.Column="1" Grid.Row="0">
+      <MenuBar>
+        <MenuBarItem x:Uid="ReceiptPage_Menu_Edit" Title="Edit">
+          <MenuFlyoutItem x:Uid="ReceiptPage_Menu_RemoveItem" Command="{x:Bind Receipt.RemoveItemCommand, Mode=OneWay}">
+            <MenuFlyoutItem.Icon>
+              <SymbolIcon Symbol="Delete" />
+            </MenuFlyoutItem.Icon>
+            <MenuFlyoutItem.KeyboardAccelerators>
+              <KeyboardAccelerator Key="Delete" />
+            </MenuFlyoutItem.KeyboardAccelerators>
+          </MenuFlyoutItem>
+          <MenuFlyoutSeparator />
+          <MenuFlyoutItem x:Uid="ReceiptPage_Menu_Participants" Click="OnChangeParticipantsClick">
+            <MenuFlyoutItem.Icon>
+              <SymbolIcon Symbol="AddFriend" />
+            </MenuFlyoutItem.Icon>
+          </MenuFlyoutItem>
+          <MenuFlyoutItem x:Uid="ReceiptPage_Menu_Currency" Click="OnChangeCurrencyClick">
+            <MenuFlyoutItem.Icon>
+              <FontIcon FontFamily="ms-appx:///SplitBill/Assets/FiraMono-Regular.ttf#Fira Mono" Glyph="$€" />
+            </MenuFlyoutItem.Icon>
+          </MenuFlyoutItem>
+          <MenuFlyoutSeparator />
+          <MenuFlyoutSubItem x:Uid="ReceiptPage_Menu_PrintWidth" Text="Print width">
+            <MenuFlyoutSubItem.Icon>
+              <SymbolIcon Symbol="Print" />
+            </MenuFlyoutSubItem.Icon>
+            <ToggleMenuFlyoutItem Text="30" IsChecked="{x:Bind Receipt.LineWidth, Mode=TwoWay, Converter={StaticResource Option}, ConverterParameter=30}" />
+            <ToggleMenuFlyoutItem Text="32" IsChecked="{x:Bind Receipt.LineWidth, Mode=TwoWay, Converter={StaticResource Option}, ConverterParameter=32}" />
+            <ToggleMenuFlyoutItem Text="40" IsChecked="{x:Bind Receipt.LineWidth, Mode=TwoWay, Converter={StaticResource Option}, ConverterParameter=40}" />
+            <ToggleMenuFlyoutItem Text="42" IsChecked="{x:Bind Receipt.LineWidth, Mode=TwoWay, Converter={StaticResource Option}, ConverterParameter=42}" />
+            <ToggleMenuFlyoutItem Text="56" IsChecked="{x:Bind Receipt.LineWidth, Mode=TwoWay, Converter={StaticResource Option}, ConverterParameter=56}" />
+          </MenuFlyoutSubItem>
+        </MenuBarItem>
+      </MenuBar>
+      <Button Command="{x:Bind Receipt.AddItemCommand, Mode=OneWay}"
+              Style="{StaticResource AccentButtonStyle}">
+        <Button.Content>
+          <StackPanel Orientation="Horizontal">
+            <SymbolIcon Symbol="Add" Margin="0,0,4,0" />
+            <TextBlock x:Uid="ReceiptPage_Menu_Add" />
+          </StackPanel>
+        </Button.Content>
+        <Button.KeyboardAccelerators>
+          <KeyboardAccelerator Modifiers="Control" Key="Enter" />
+        </Button.KeyboardAccelerators>
+      </Button>
+    </StackPanel>
+    <controls:DataGrid ItemsSource="{x:Bind Receipt.Items, Mode=OneWay}"
+                       AutoGenerateColumns="False"
+                       FrozenColumnCount="2"
+                       Background="Transparent"
+                       SelectedItem="{x:Bind Receipt.SelectedItem, Mode=TwoWay}"
+                       Grid.Row="1" Grid.Column="1">
+      <controls:DataGrid.KeyboardAccelerators>
+        <KeyboardAccelerator Modifiers="Control" Key="Enter" Invoked="DGAddItemInvoked" />
+        <KeyboardAccelerator Modifiers="None" Key="Delete" Invoked="DGRemoveItemInvoked" />
+      </controls:DataGrid.KeyboardAccelerators>
+      <controls:DataGrid.Columns>
+        <controls:DataGridTextColumn x:Uid="ReceiptPage_DataGrid_Item"
+                                     Binding="{Binding Name, Mode=TwoWay}"
+                                     Width="180" />
+        <controls:DataGridTemplateColumn x:Uid="ReceiptPage_DataGrid_Price"
+                                         Width="120">
+          <controls:DataGridTemplateColumn.CellTemplate>
+            <DataTemplate x:DataType="data:ReceiptItem">
+              <TextBlock VerticalAlignment="Center"
+                         Padding="12,0"
+                         TextAlignment="Right">
+                <Run Text="{x:Bind Price, Mode=OneWay, Converter={StaticResource Price}}" />
+                <Run Text="{x:Bind Receipt.Currency, Mode=OneWay}" />
+              </TextBlock>
+            </DataTemplate>
+          </controls:DataGridTemplateColumn.CellTemplate>
+          <controls:DataGridTemplateColumn.CellEditingTemplate>
+            <DataTemplate x:DataType="data:ReceiptItem">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{x:Bind Price, Mode=TwoWay, Converter={StaticResource Price}}"
+                         Loaded="OnPriceInputLoaded"
+                         Grid.Column="0"
+                         TextAlignment="Right" />
+                <TextBlock Text="{x:Bind Receipt.Currency, Mode=OneWay}"
+                           Grid.Column="1"
+                           Padding="0,0,11,0"
+                           VerticalAlignment="Center" />
+              </Grid>
+            </DataTemplate>
+          </controls:DataGridTemplateColumn.CellEditingTemplate>
+        </controls:DataGridTemplateColumn>
+        <controls:DataGridTemplateColumn x:Uid="ReceiptPage_DataGrid_Participants"
+                                         Width="*">
+          <controls:DataGridTemplateColumn.CellTemplate>
+            <DataTemplate x:DataType="data:ReceiptItem">
+              <ItemsControl ItemsSource="{x:Bind ActiveParticipantCounts, Mode=OneWay}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Padding="12,0" Spacing="8" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="data:ParticipantDAO">
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock>
+                      <Run Text="{x:Bind Name, Mode=OneWay}" />
+                      <Run Text="×" />
+                      </TextBlock>
+                      <TextBlock Text="{x:Bind Amount, Mode=OneWay}" />
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </DataTemplate>
+          </controls:DataGridTemplateColumn.CellTemplate>
+          <controls:DataGridTemplateColumn.CellEditingTemplate>
+            <DataTemplate x:DataType="data:ReceiptItem">
+              <ItemsControl ItemsSource="{x:Bind ParticipantCounts, Mode=OneWay}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Padding="12,0" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="data:ParticipantDAO">
+                    <CheckBox Content="{x:Bind Name, Mode=OneWay}"
+                              x:Name="participantCheckbox"
+                              IsChecked="{x:Bind Amount, Mode=TwoWay, Converter={StaticResource Checkbox}}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </DataTemplate>
+          </controls:DataGridTemplateColumn.CellEditingTemplate>
+        </controls:DataGridTemplateColumn>
+      </controls:DataGrid.Columns>
+      <!-- It keeps crashing
+      <controls:DataGrid.RowDetailsTemplate>
+        <DataTemplate x:DataType="data:ReceiptItem">
+          <ItemsControl ItemsSource="{x:Bind ParticipantCounts, Mode=OneWay}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="data:ParticipantDAO">
+                <ContentControl>
+                  <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup>
+                      <VisualState>
+                        <VisualState.StateTriggers>
+                          <StateTrigger IsActive="{x:Bind ShowAmountInput, Mode=OneWay}" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                          <Setter Target="participantNumeric.Visibility" Value="Visible" />
+                        </VisualState.Setters>
+                      </VisualState>
+                    </VisualStateGroup>
+                  </VisualStateManager.VisualStateGroups>
+                  <NumberBox Value="{x:Bind Amount, Mode=TwoWay, FallbackValue=1}" x:Name="participantNumeric" Visibility="Collapsed" />
+                </ContentControl>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </DataTemplate>
+      </controls:DataGrid.RowDetailsTemplate>
+      -->
+    </controls:DataGrid>
+  </Grid>
+</Page>
