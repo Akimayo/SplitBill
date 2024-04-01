@@ -69,7 +69,7 @@ internal partial class Receipt
 
     public Task<ReceiptForm> LoadAsync()
     {
-        ReceiptForm form = Activator.CreateInstance(this._formType, this._location) as ReceiptForm;
+        ReceiptForm form = Activator.CreateInstance(this._formType ?? typeof(ReceiptForm), this._location) as ReceiptForm;
         form.Currency = this.Currency;
         form.Date = this.Date;
         form.IsValid = this.IsValid;
