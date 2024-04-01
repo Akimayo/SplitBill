@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -64,9 +65,24 @@ internal partial class ReceiptForm
     }
     protected async Task WriteAsync()
     {
-        Stream s = await this._location.OpenStreamForWriteAsync();
-        using (StreamWriter writer = new(s, Encoding.ASCII))
-            await writer.WriteAsync(this.ToString());
+        using Stream s = await this._location.OpenStreamForWriteAsync();
+        using StreamWriter writer = new(s);
+        await writer.WriteAsync(this.ToString());
+    }
+
+    protected async Task WriteNormalizedAsync(Stream s)
+    {
+        string normalized = this.ToString().Normalize(NormalizationForm.FormD);
+        StringBuilder builder = new StringBuilder(capacity: normalized.Length);
+        char c;
+        for (int i = 0; i < normalized.Length; i++)
+        {
+            c = normalized[i];
+            if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                builder.Append(c);
+        }
+        using StreamWriter writer = new(s);
+        await writer.WriteAsync(builder.ToString().Normalize(NormalizationForm.FormC));
     }
 
     private async void SaveReceipt(object? sender, object e)
