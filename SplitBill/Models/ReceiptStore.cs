@@ -40,9 +40,8 @@ internal static class ReceiptStore
     public static async Task<IEnumerable<Receipt>> LoadReceiptsAsync()
     {
         StorageFolder folder = await GetStorage();
-        //System.IO.Directory.EnumerateFiles(folder.Path);
-        IEnumerable<StorageFile> files = await folder.GetFilesAsync(); // FIXME: This either crashes somewhere, or it doesn't return anything
-        return files.Select(f => new Receipt(f)).OrderBy(r => r.Date);
+        IEnumerable<StorageFile> files = await folder.GetFilesAsync();
+        return files.Select(f => new Receipt(f)).OrderByDescending(r => r.Date).Reverse();
     }
     /// <summary>
     /// Creates a new file for a <see cref="Receipt"/>.
