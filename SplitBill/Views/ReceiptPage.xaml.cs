@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using CommunityToolkit.WinUI.UI.Controls;
 using SplitBill.Data;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -30,8 +31,15 @@ public sealed partial class ReceiptPage : Page, INotifyPropertyChanged
         this.Frame.GoBack();
     }
 
-    private void DGAddItemInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator _, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs __) =>
+    private void DGAddItemInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator _, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
+    {
         this.Receipt.AddItemCommand.Execute(null);
+        if (args.Element is DataGrid dg)
+        {
+            this.Receipt.SelectedItem = this.Receipt.Items.Last();
+            dg.BeginEdit();
+        }
+    }
 
     private void DGRemoveItemInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator _, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs __) =>
         this.Receipt.RemoveItemCommand.Execute(null);
@@ -54,5 +62,18 @@ public sealed partial class ReceiptPage : Page, INotifyPropertyChanged
             tb.Focus(FocusState.Keyboard);
             tb.SelectAll();
         }
+    }
+
+    private void DGEditBeginning(object sender, DataGridBeginningEditEventArgs e)
+    {
+        if (sender is DataGrid dg && e.Column.DisplayIndex == 2)
+        {
+            dg.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.VisibleWhenSelected;
+        }
+    }
+
+    private void DGEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+    {
+        if (sender is DataGrid dg) dg.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Collapsed;
     }
 }

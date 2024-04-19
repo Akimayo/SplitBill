@@ -108,6 +108,9 @@
                        FrozenColumnCount="2"
                        Background="Transparent"
                        SelectedItem="{x:Bind Receipt.SelectedItem, Mode=TwoWay}"
+                       CellEditEnding="DGEditEnding"
+                       BeginningEdit="DGEditBeginning"
+                       RowDetailsVisibilityMode="Collapsed"
                        Grid.Row="1" Grid.Column="1">
       <controls:DataGrid.KeyboardAccelerators>
         <KeyboardAccelerator Modifiers="Control" Key="Enter" Invoked="DGAddItemInvoked" />
@@ -192,18 +195,17 @@
           </controls:DataGridTemplateColumn.CellEditingTemplate>
         </controls:DataGridTemplateColumn>
       </controls:DataGrid.Columns>
-      <!-- It keeps crashing
       <controls:DataGrid.RowDetailsTemplate>
         <DataTemplate x:DataType="data:ReceiptItem">
-          <ItemsControl ItemsSource="{x:Bind ParticipantCounts, Mode=OneWay}">
+          <ItemsControl ItemsSource="{x:Bind ActiveParticipantCounts, Mode=OneWay}">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal" />
+                <StackPanel Orientation="Horizontal" Margin="300,0,0,0" />
               </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="data:ParticipantDAO">
-                <ContentControl>
+      <!-- It keeps crashing
                   <VisualStateManager.VisualStateGroups>
                     <VisualStateGroup>
                       <VisualState>
@@ -216,14 +218,13 @@
                       </VisualState>
                     </VisualStateGroup>
                   </VisualStateManager.VisualStateGroups>
-                  <NumberBox Value="{x:Bind Amount, Mode=TwoWay, FallbackValue=1}" x:Name="participantNumeric" Visibility="Collapsed" />
-                </ContentControl>
+      -->
+                  <NumberBox Value="{x:Bind Amount, Mode=TwoWay, FallbackValue=1}" Minimum="1" />
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
         </DataTemplate>
       </controls:DataGrid.RowDetailsTemplate>
-      -->
     </controls:DataGrid>
   </Grid>
 </Page>
