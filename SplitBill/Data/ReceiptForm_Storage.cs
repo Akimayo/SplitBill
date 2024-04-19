@@ -93,7 +93,7 @@ internal partial class ReceiptForm
         this.OnPropertyChanged(nameof(this.TextReceipt));
     }
 
-    [GeneratedRegex(@"^(.+)?\s+([^\d]+)(\-?\d+[,\.]\d{2})\s*$")]
+    [GeneratedRegex(@"^(.+?)?\s+([^\d]+?)(\-?\d+[,\.]\d{2})\s*$")]
     private static partial Regex ItemFormatRegex();
     [GeneratedRegex(@"^(\||\s)\s(.+?)(\s×(\d+))?\s*$")]
     private static partial Regex ParticipantFormatRegex();
