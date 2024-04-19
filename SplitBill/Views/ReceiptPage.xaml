@@ -111,7 +111,7 @@
                        Grid.Row="1" Grid.Column="1">
       <controls:DataGrid.KeyboardAccelerators>
         <KeyboardAccelerator Modifiers="Control" Key="Enter" Invoked="DGAddItemInvoked" />
-        <KeyboardAccelerator Modifiers="None" Key="Delete" Invoked="DGRemoveItemInvoked" />
+        <!-- <KeyboardAccelerator Modifiers="None" Key="Delete" Invoked="DGRemoveItemInvoked" /> This is already handled by the MenuItem KeyboardAccelerator -->
       </controls:DataGrid.KeyboardAccelerators>
       <controls:DataGrid.Columns>
         <controls:DataGridTextColumn x:Uid="ReceiptPage_DataGrid_Item"
