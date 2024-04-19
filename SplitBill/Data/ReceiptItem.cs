@@ -53,7 +53,8 @@ internal class ParticipantDAO(ReceiptItem parent, int index) : INotifyPropertyCh
         set
         {
             if (index >= parent.Participants.Count)
-                parent.Participants.AddRange(new byte[index - parent.Participants.Count]); parent.Participants.Insert(index, value);
+                parent.Participants.AddRange(new byte[index - parent.Participants.Count + 1]);
+            parent.Participants[index] = value;
             this.OnPropertyChanged();
             this.OnPropertyChanged(nameof(this.ShowAmountInput));
         }
