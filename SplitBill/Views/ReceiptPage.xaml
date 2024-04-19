@@ -149,7 +149,7 @@
           </controls:DataGridTemplateColumn.CellEditingTemplate>
         </controls:DataGridTemplateColumn>
         <controls:DataGridTemplateColumn x:Uid="ReceiptPage_DataGrid_Participants"
-                                         Width="*">
+                                         Width="Auto">
           <controls:DataGridTemplateColumn.CellTemplate>
             <DataTemplate x:DataType="data:ReceiptItem">
               <ItemsControl ItemsSource="{x:Bind ActiveParticipantCounts, Mode=OneWay}">
